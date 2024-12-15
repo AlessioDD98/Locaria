@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Summary</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    input { margin-right: 1rem; }
+    button { margin-right: 1rem; }
+    #results { margin-top: 2rem; white-space: pre; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>Customer Summary</h1>
+  <p>Enter a Customer ID and click "Get Summary" to fetch aggregated data.</p>
+  <input type="text" id="customerIdInput" placeholder="Enter Customer ID..." />
+  <button onclick="getSummary()">Get Summary</button>
+  <div id="results"></div>
+
+  <script>
+    async function getSummary() {
+      const customerId = document.getElementById('customerIdInput').value.trim();
+      if (!customerId) {
+        alert("Please enter a Customer ID.");
+        return;
+      }
+      try {
+        const response = await fetch(`/api/customers/${customerId}/summary`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`API returned status ${response.status}:\n${errorText}`);
+        }
+        const data = await response.json();
+        document.getElementById('results').textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        document.getElementById('results').textContent = `Error:\n${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html>
